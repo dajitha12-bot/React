@@ -1,0 +1,20 @@
+[
+  {
+    "id": 2,
+    "rollNo": "IT102",
+    "name": "Priya",
+    "department": "Information Technology",
+    "year": "2nd Year",
+    "course": "Frontend Development",
+    "email": "priya@gmail.com"
+  },
+  {
+    "id": 3,
+    "rollNo": "IT03",
+    "name": "Ajitha D R",
+    "department": "IT",
+    "year": "3rd Year",
+    "course": "Frontend Development",
+    "email": "dajitha12@gmail.com"
+  }
+]
