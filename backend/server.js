@@ -7,13 +7,11 @@ const app = express();
 
 const PORT = 5000;
 
-const DATA_FILE =
-  path.join(
-    __dirname,
-    "data",
-    "students.json"
-  );
-
+const DATA_FILE = path.join(
+  __dirname,
+  "data",
+  "students.json"
+);
 
 // ============================================================
 // MIDDLEWARE
@@ -23,39 +21,28 @@ app.use(cors());
 
 app.use(express.json());
 
-
 // ============================================================
 // READ JSON FILE
 // ============================================================
 
 function readStudents() {
-
   try {
-
-    const data =
-      fs.readFileSync(
-        DATA_FILE,
-        "utf-8"
-      );
+    const data = fs.readFileSync(
+      DATA_FILE,
+      "utf-8"
+    );
 
     return JSON.parse(data);
-
-  }
-  catch (error) {
-
+  } catch (error) {
     return [];
-
   }
-
 }
-
 
 // ============================================================
 // WRITE JSON FILE
 // ============================================================
 
 function writeStudents(students) {
-
   fs.writeFileSync(
     DATA_FILE,
     JSON.stringify(
@@ -64,25 +51,18 @@ function writeStudents(students) {
       2
     )
   );
-
 }
-
 
 // ============================================================
 // HOME
 // ============================================================
 
 app.get("/", (req, res) => {
-
   res.json({
-    message:
-      "Student Management API is running",
-    database:
-      "JSON File"
+    message: "Student Management API is running",
+    database: "JSON File"
   });
-
 });
-
 
 // ============================================================
 // GET ALL STUDENTS
@@ -91,27 +71,17 @@ app.get("/", (req, res) => {
 app.get(
   "/api/students",
   (req, res) => {
-
     try {
-
-      const students =
-        readStudents();
+      const students = readStudents();
 
       res.json(students);
-
-    }
-    catch (error) {
-
+    } catch (error) {
       res.status(500).json({
-        message:
-          "Failed to read students"
+        message: "Failed to read students"
       });
-
     }
-
   }
 );
-
 
 // ============================================================
 // GET STUDENT BY ID
@@ -120,34 +90,23 @@ app.get(
 app.get(
   "/api/students/:id",
   (req, res) => {
+    const students = readStudents();
 
-    const students =
-      readStudents();
+    const id = Number(req.params.id);
 
-    const id =
-      Number(req.params.id);
-
-    const student =
-      students.find(
-        (item) => item.id === id
-      );
-
+    const student = students.find(
+      (item) => item.id === id
+    );
 
     if (!student) {
-
       return res.status(404).json({
-        message:
-          "Student not found"
+        message: "Student not found"
       });
-
     }
 
-
     res.json(student);
-
   }
 );
-
 
 // ============================================================
 // ADD STUDENT
@@ -156,12 +115,8 @@ app.get(
 app.post(
   "/api/students",
   (req, res) => {
-
     try {
-
-      const students =
-        readStudents();
-
+      const students = readStudents();
 
       const {
         rollNo,
@@ -172,7 +127,6 @@ app.post(
         email
       } = req.body;
 
-
       if (
         !rollNo ||
         !name ||
@@ -181,34 +135,24 @@ app.post(
         !course ||
         !email
       ) {
-
         return res.status(400).json({
           message:
             "All student fields are required"
         });
-
       }
 
-
-      const duplicate =
-        students.find(
-          (student) =>
-            student.rollNo
-              .toLowerCase() ===
-            rollNo
-              .toLowerCase()
-        );
-
+      const duplicate = students.find(
+        (student) =>
+          student.rollNo.toLowerCase() ===
+          rollNo.toLowerCase()
+      );
 
       if (duplicate) {
-
         return res.status(400).json({
           message:
             "Roll number already exists"
         });
-
       }
-
 
       const newStudent = {
         id:
@@ -219,6 +163,7 @@ app.post(
                 )
               ) + 1
             : 1,
+
         rollNo,
         name,
         department,
@@ -227,27 +172,21 @@ app.post(
         email
       };
 
-
       students.push(newStudent);
 
       writeStudents(students);
 
-
-      res.status(201).json(newStudent);
-
-    }
-    catch (error) {
-
+      res.status(201).json(
+        newStudent
+      );
+    } catch (error) {
       res.status(500).json({
         message:
           "Failed to add student"
       });
-
     }
-
   }
 );
-
 
 // ============================================================
 // UPDATE STUDENT
@@ -256,32 +195,24 @@ app.post(
 app.put(
   "/api/students/:id",
   (req, res) => {
-
     try {
+      const students = readStudents();
 
-      const students =
-        readStudents();
-
-
-      const id =
-        Number(req.params.id);
-
+      const id = Number(
+        req.params.id
+      );
 
       const index =
         students.findIndex(
           (s) => s.id === id
         );
 
-
       if (index === -1) {
-
         return res.status(404).json({
           message:
             "Student not found"
         });
-
       }
-
 
       const {
         rollNo,
@@ -292,7 +223,6 @@ app.put(
         email
       } = req.body;
 
-
       if (
         !rollNo ||
         !name ||
@@ -301,14 +231,11 @@ app.put(
         !course ||
         !email
       ) {
-
         return res.status(400).json({
           message:
             "All student fields are required"
         });
-
       }
-
 
       const duplicate =
         students.find(
@@ -316,20 +243,15 @@ app.put(
             student.id !== id &&
             student.rollNo
               .toLowerCase() ===
-            rollNo
-              .toLowerCase()
+              rollNo.toLowerCase()
         );
 
-
       if (duplicate) {
-
         return res.status(400).json({
           message:
             "Roll number already exists"
         });
-
       }
-
 
       students[index] = {
         id,
@@ -341,25 +263,19 @@ app.put(
         email
       };
 
-
       writeStudents(students);
 
-
-      res.json(students[index]);
-
-    }
-    catch (error) {
-
+      res.json(
+        students[index]
+      );
+    } catch (error) {
       res.status(500).json({
         message:
           "Failed to update student"
       });
-
     }
-
   }
 );
-
 
 // ============================================================
 // DELETE STUDENT
@@ -368,66 +284,60 @@ app.put(
 app.delete(
   "/api/students/:id",
   (req, res) => {
-
     try {
+      const students = readStudents();
 
-      const students =
-        readStudents();
-
-
-      const id =
-        Number(req.params.id);
-
+      const id = Number(
+        req.params.id
+      );
 
       const filtered =
         students.filter(
           (s) => s.id !== id
         );
 
-
       if (
         students.length ===
         filtered.length
       ) {
-
         return res.status(404).json({
           message:
             "Student not found"
         });
-
       }
 
-
       writeStudents(filtered);
-
 
       res.json({
         message:
           "Student deleted successfully"
       });
-
-    }
-    catch (error) {
-
+    } catch (error) {
       res.status(500).json({
         message:
           "Failed to delete student"
       });
-
     }
-
   }
 );
 
+// ============================================================
+// LOCAL SERVER
+// ============================================================
+
+// Run app.listen only when running locally.
+// Vercel will handle the server automatically.
+
+if (process.env.VERCEL !== "1") {
+  app.listen(PORT, () => {
+    console.log(
+      `Server is running on http://localhost:${PORT}`
+    );
+  });
+}
 
 // ============================================================
-// LISTEN
+// EXPORT APP FOR VERCEL
 // ============================================================
 
-app.listen(PORT, () => {
-
-  console.log(
-    `Server is running on http://localhost:${PORT}`
-  );
-
-});
+module.exports = app;
