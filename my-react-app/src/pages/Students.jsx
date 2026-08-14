@@ -5,7 +5,7 @@ import StudentList from "../components/StudentList";
 
 
 const API_URL =
-  "http://localhost:5000/api/students";
+  "https://react-xg2v.vercel.app/api/students";
 
 
 function Students() {
